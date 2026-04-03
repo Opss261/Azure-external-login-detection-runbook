@@ -1,0 +1,4 @@
+SigninLogs
+| where TimeGenerated > ago(30d)
+| where Location !contains "United Kingdom"
+| project UserPrincipalName, Location, IPAddress, TimeGenerated
