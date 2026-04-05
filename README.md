@@ -19,12 +19,12 @@ Without automation, identifying these events would require manually reviewing lo
 ## Architecture
 To solve this, I would use Azure-native services:
 
-- Azure Entra ID sign-in logs as the data source  
-- Log Analytics to query and analyse login activity  
-- KQL to filter out logins outside the UK  
-- Azure Automation to run the process  
-- A PowerShell Runbook to tie everything together  
-- Email alerts to notify the relevant team  
+- Azure Entra ID sign-in logs as the data source
+- Log Analytics to query and analyse login activity
+- KQL to filter out logins outside the UK
+- Azure Automation to run the process
+- A PowerShell Runbook to tie everything together
+- Email alerts to notify the relevant team *(alert payload prepared — delivery integration planned as next step)*
 
 The idea is to keep everything within Azure so it's simple, integrated, and easy to manage.
 
@@ -36,10 +36,10 @@ The core of the solution is a PowerShell Runbook.
 I would schedule it to run daily, for example at 8 AM, so it consistently checks for any new activity.
 
 Each time it runs, it:
-- Queries the sign-in logs  
-- Filters for non-UK logins  
-- Pulls out useful details  
-- Prepares a report  
+- Queries the sign-in logs
+- Filters for non-UK logins
+- Pulls out useful details
+- Prepares a report
 
 From an operational perspective, this ensures the process is consistent, repeatable, and does not rely on manual intervention.
 
@@ -49,5 +49,5 @@ From an operational perspective, this ensures the process is consistent, repeata
 ```kql
 SigninLogs
 | where TimeGenerated > ago(30d)
-| where Location !contains "United Kingdom"
-| project UserPrincipalName, Location, IPAddress, TimeGenerated
+| where LocationDetails.countryOrRegion != "GB"
+| project UserPrincipalName, IPAddress, TimeGenerated, LocationDetails
