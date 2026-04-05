@@ -51,3 +51,6 @@ SigninLogs
 | where TimeGenerated > ago(30d)
 | where LocationDetails.countryOrRegion != "GB"
 | project UserPrincipalName, IPAddress, TimeGenerated, LocationDetails
+```
+## Demo Output
+The runbook was tested in Azure Automation and executed successfully. The output below shows the detection and reporting logic working with simulated data.
