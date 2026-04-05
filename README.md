@@ -54,3 +54,14 @@ SigninLogs
 ```
 ## Demo Output
 The runbook was tested in Azure Automation and executed successfully. The output below shows the detection and reporting logic working with simulated data.
+
+![Runbook Output](screenshots/runbook-output.png)
+
+---
+
+## Next Steps
+- Integrate real alert delivery via Logic App, SendGrid, or Teams webhook
+- Connect to live Log Analytics workspace once sign-in log ingestion is confirmed
+- Add a whitelist for approved remote workers or known travel
+- Schedule the runbook to run daily at 8 AM
+- Extend detection to include failed login attempts from non-UK IPs
