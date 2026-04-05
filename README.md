@@ -48,6 +48,6 @@ From an operational perspective, this ensures the process is consistent, repeata
 ## KQL Query Example
 ```kql
 SigninLogs
-| where TimeGenerated > days(30d)
+| where TimeGenerated > ago(30d)
 | where Location !contains "United Kingdom"
 | project UserPrincipalName, Location, IPAddress, TimeGenerated
