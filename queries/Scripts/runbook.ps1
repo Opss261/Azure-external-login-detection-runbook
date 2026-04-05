@@ -29,6 +29,18 @@ $Results = @(
         Country           = "Ghana"
         IPAddress         = "102.176.12.10"
         TimeGenerated     = "2026-04-02 08:15:00"
+    },
+    [PSCustomObject]@{
+        UserPrincipalName = "jane.doe@company.com"
+        Country           = "Nigeria"
+        IPAddress         = "197.210.54.33"
+        TimeGenerated     = "2026-04-03 11:42:00"
+    },
+    [PSCustomObject]@{
+        UserPrincipalName = "mark.smith@company.com"
+        Country           = "Netherlands"
+        IPAddress         = "185.220.101.45"
+        TimeGenerated     = "2026-04-04 16:08:00"
     }
 )
 
@@ -46,10 +58,11 @@ if ($Results.Count -gt 0) {
     $EmailBody = @"
 External login activity detected.
 
-User: $($Results[0].UserPrincipalName)
-Country: $($Results[0].Country)
-IP Address: $($Results[0].IPAddress)
-Time: $($Results[0].TimeGenerated)
+The following users have signed in from outside the UK in the past 30 days:
+
+User: $($Results[0].UserPrincipalName) | Country: $($Results[0].Country) | IP: $($Results[0].IPAddress) | Time: $($Results[0].TimeGenerated)
+User: $($Results[1].UserPrincipalName) | Country: $($Results[1].Country) | IP: $($Results[1].IPAddress) | Time: $($Results[1].TimeGenerated)
+User: $($Results[2].UserPrincipalName) | Country: $($Results[2].Country) | IP: $($Results[2].IPAddress) | Time: $($Results[2].TimeGenerated)
 
 Please review and confirm whether this sign-in activity is expected.
 "@
