@@ -55,7 +55,8 @@ SigninLogs
 ## Demo Output
 The runbook was tested in Azure Automation and executed successfully. The output below shows the detection and reporting logic working with simulated data.
 
-![Runbook Output](screenshots/runbook-output.png)
+![Runbook Output 1](screenshots/runbook-output-1.png)
+![Runbook Output 2](screenshots/runbook-output-2.png)
 
 ---
 
