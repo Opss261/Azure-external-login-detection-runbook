@@ -1,7 +1,9 @@
 # Azure External Login Detection Runbook
 # Presentation/demo version showing the overall workflow
+# Updated to send alert data to a Logic App webhook
 
 $DaysToCheck = 30
+$LogicAppUrl = "https://prod-94.eastus.logic.azure.com:443/workflows/e07fce330ec1403dacb857facfa96803/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=I0MGlOCPrbEpAdJ534P7Tm_IGzf3kaDPSyqYsMnhs6Y"
 
 Write-Output "Starting Azure external login detection runbook..."
 Write-Output "Checking sign-in activity from the past $DaysToCheck days."
@@ -70,12 +72,21 @@ Please review and confirm whether this sign-in activity is expected.
     Write-Output "Prepared email alert:"
     Write-Output $EmailBody
 
-    # Example only:
-    # Send-MailMessage -To "itmanager@company.com" `
-    #                  -From "alerts@company.com" `
-    #                  -Subject "External Login Alert" `
-    #                  -Body $EmailBody `
-    #                  -SmtpServer "smtp.office365.com"
+    foreach ($Result in $Results) {
+        $body = @{
+            user     = $Result.UserPrincipalName
+            location = $Result.Country
+            ip       = $Result.IPAddress
+            time     = $Result.TimeGenerated
+        } | ConvertTo-Json
+
+        Invoke-RestMethod -Uri $LogicAppUrl `
+                          -Method POST `
+                          -Body $body `
+                          -ContentType "application/json"
+    }
+
+    Write-Output "Alert sent to Logic App successfully."
 }
 else {
     Write-Output "No external logins detected."
