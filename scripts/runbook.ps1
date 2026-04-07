@@ -26,22 +26,22 @@ Write-Output "KQL query prepared successfully."
 # Demo data for presentation purposes
 $Results = @(
     [PSCustomObject]@{
-        UserPrincipalName = "test.user@company.com"
-        Country           = "Ghana"
-        IPAddress         = "102.176.12.10"
+        UserPrincipalName = "billy.malone@mjquinn.co.uk"
+        Country           = "Thailand"
+        IPAddress         = "110.169.55.21"
         TimeGenerated     = "2026-04-02 08:15:00"
     },
     [PSCustomObject]@{
-        UserPrincipalName = "jane.doe@company.com"
-        Country           = "Nigeria"
-        IPAddress         = "197.210.54.33"
-        TimeGenerated     = "2026-04-03 11:42:00"
+        UserPrincipalName = "Danielsabs09@gmail.com"
+        Country           = "Japan"
+        IPAddress         = "133.130.45.12"
+        TimeGenerated     = "2026-04-02 08:18:00"
     },
     [PSCustomObject]@{
-        UserPrincipalName = "mark.smith@company.com"
+        UserPrincipalName = "Opss261@outlook.com"
         Country           = "Netherlands"
         IPAddress         = "185.220.101.45"
-        TimeGenerated     = "2026-04-04 16:08:00"
+        TimeGenerated     = "2026-04-02 08:26:00"
     }
 )
 
