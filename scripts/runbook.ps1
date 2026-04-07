@@ -1,10 +1,9 @@
 # Azure External Login Detection Runbook
 # Presentation/demo version showing the overall workflow
-# Updated to send alert data to a Logic App webhook
+# Updated to send a single consolidated alert to a Logic App webhook
 
 $DaysToCheck = 30
-$LogicAppUrl = "https://prod-94.eastus.logic.azure.com:443/workflows/e07fce330ec1403dacb857facfa96803/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=I0MGlOCPrbEpAdJ534P7Tm_IGzf3kaDPSyqYsMnhs6Y"
-
+$LogicAppUrl = "<REDACTED_LOGIC_APP_URL>"
 Write-Output "Starting Azure external login detection runbook..."
 Write-Output "Checking sign-in activity from the past $DaysToCheck days."
 
@@ -22,7 +21,7 @@ Write-Output "KQL query prepared successfully."
 # 2. Execute the KQL query
 # 3. Process any returned sign-in events
 # 4. Format a report
-# 5. Send an email alert if required
+# 5. Send a single consolidated email alert if required
 
 # Demo data for presentation purposes
 $Results = @(
@@ -57,36 +56,32 @@ if ($Results.Count -gt 0) {
         Write-Output "-----------------------------"
     }
 
-    $EmailBody = @"
-External login activity detected.
-
-The following users have signed in from outside the UK in the past 30 days:
-
-User: $($Results[0].UserPrincipalName) | Country: $($Results[0].Country) | IP: $($Results[0].IPAddress) | Time: $($Results[0].TimeGenerated)
-User: $($Results[1].UserPrincipalName) | Country: $($Results[1].Country) | IP: $($Results[1].IPAddress) | Time: $($Results[1].TimeGenerated)
-User: $($Results[2].UserPrincipalName) | Country: $($Results[2].Country) | IP: $($Results[2].IPAddress) | Time: $($Results[2].TimeGenerated)
-
-Please review and confirm whether this sign-in activity is expected.
-"@
-
-    Write-Output "Prepared email alert:"
-    Write-Output $EmailBody
+    $EmailBody = "External login activity detected.`n`n"
+    $EmailBody += "The following users have signed in from outside the UK in the past 30 days:`n`n"
 
     foreach ($Result in $Results) {
-        $body = @{
-            user     = $Result.UserPrincipalName
-            location = $Result.Country
-            ip       = $Result.IPAddress
-            time     = $Result.TimeGenerated
-        } | ConvertTo-Json
-
-        Invoke-RestMethod -Uri $LogicAppUrl `
-                          -Method POST `
-                          -Body $body `
-                          -ContentType "application/json"
+        $EmailBody += "User: $($Result.UserPrincipalName)`n"
+        $EmailBody += "Country: $($Result.Country)`n"
+        $EmailBody += "IP Address: $($Result.IPAddress)`n"
+        $EmailBody += "Time: $($Result.TimeGenerated)`n"
+        $EmailBody += "-----------------------------`n"
     }
 
-    Write-Output "Alert sent to Logic App successfully."
+    $EmailBody += "`nPlease review and confirm whether this sign-in activity is expected."
+
+    Write-Output "Prepared consolidated email alert:"
+    Write-Output $EmailBody
+
+    $body = @{
+        AlertMessage = $EmailBody
+    } | ConvertTo-Json -Depth 3
+
+    Invoke-RestMethod -Uri $LogicAppUrl `
+                      -Method POST `
+                      -Body $body `
+                      -ContentType "application/json"
+
+    Write-Output "Consolidated alert sent to Logic App successfully."
 }
 else {
     Write-Output "No external logins detected."
